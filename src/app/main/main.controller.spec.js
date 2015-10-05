@@ -1,39 +1,35 @@
-(function() {
-  'use strict';
+(function () {
+    'use strict';
 
-  describe('controllers', function(){
-    var vm;
-    var $timeout;
-    var toastr;
+    describe('controllers', function () {
+        var vm,
+            data;
 
-    beforeEach(module('testWork'));
-    beforeEach(inject(function(_$controller_, _$timeout_, _webDevTec_, _toastr_) {
-      spyOn(_webDevTec_, 'getTec').and.returnValue([{}, {}, {}, {}, {}]);
-      spyOn(_toastr_, 'info').and.callThrough();
+        beforeEach(module('testWork'));
+        beforeEach(inject(function (_$controller_) {
+            vm = _$controller_('MainController');
+        }));
 
-      vm = _$controller_('MainController');
-      $timeout = _$timeout_;
-      toastr = _toastr_;
-    }));
+        it('should have data', function () {
+            // Проверим, что данные существуют.
+            expect(vm.data).toEqual(jasmine.any(Array));
+            expect(vm.data.length).toBeGreaterThan(3);
+        });
 
-    it('should have a timestamp creation date', function() {
-      expect(vm.creationDate).toEqual(jasmine.any(Number));
+        it('should be normalized', function () {
+            // Для тестов, выберем последний набор данных.
+            var dataSet = vm.data[vm.data.length - 1];
+
+            expect(vm.selectSet).toEqual(jasmine.any(Function));
+            vm.selectSet(dataSet);
+            expect(vm.dataSet).toEqual(dataSet);
+            // Сумма всех процетов должны быть равна 100.
+            var cnt = vm.dataSet.length,
+                percents = 0;
+            while (--cnt > -1) {
+                percents += vm.dataSet[cnt].Percent;
+            }
+            expect(Math.round(percents)).toBe(100);
+        });
     });
-
-    it('should define animate class after delaying timeout ', function() {
-      $timeout.flush();
-      expect(vm.classAnimation).toEqual('rubberBand');
-    });
-
-    it('should show a Toastr info and stop animation when invoke showToastr()', function() {
-      vm.showToastr();
-      expect(toastr.info).toHaveBeenCalled();
-      expect(vm.classAnimation).toEqual('');
-    });
-
-    it('should define more than 5 awesome things', function() {
-      expect(angular.isArray(vm.awesomeThings)).toBeTruthy();
-      expect(vm.awesomeThings.length === 5).toBeTruthy();
-    });
-  });
 })();
