@@ -1,0 +1,11 @@
+<nav>
+    <ul class="pagination">
+        <li ng-repeat="set in main.data"><a href="#" ng-click="main.selectSet(set)">Набор данных {{$index+1}}</a></li>
+    </ul>
+</nav>
+{{main.dataSet}}
+<ul class="list-unstyled">
+    <li ng-repeat="item in main.dataSet">
+        <input type="number" ng-model="item.Percent" ng-change="main.change(item)" />
+    </li>
+</ul>
