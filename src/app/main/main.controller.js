@@ -67,6 +67,9 @@
          */
         vm.change = function (elem) {
             format(elem);
+            elem.Percent = elem.Percent > 0 ? elem.Percent : 0;
+            elem.Percent = elem.Percent < 100 ? elem.Percent : 100;
+
             recalculate(elem);
         };
 

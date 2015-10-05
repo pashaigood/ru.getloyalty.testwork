@@ -12,19 +12,8 @@ $icon-font-path: "../../bower_components/bootstrap-sass/assets/fonts/bootstrap/"
 // bower:scss
 // endbower
 
-.browsehappy {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
-}
-
-.thumbnail {
-  height: 200px;
-
-  img.pull-right {
-    width: 50px;
-  }
+body {
+  background: url('http://supernovathemes.com/wp-content/themes/supernonvathemes/images/bg/b8.png');
 }
 
 /**

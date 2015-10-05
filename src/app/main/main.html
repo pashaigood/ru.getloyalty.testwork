@@ -6,6 +6,16 @@
 {{main.dataSet}}
 <ul class="list-unstyled">
     <li ng-repeat="item in main.dataSet">
-        <input type="number" ng-model="item.Percent" ng-change="main.change(item)" />
+        <div class="row form-group">
+            <div class="col-xs-10">
+                <input class="form-control" type="range" ng-model="item.Percent" ng-change="main.change(item)"/>
+            </div>
+            <div class="col-xs-2">
+                <input class="form-control" type="number"
+                       ng-model="item.Percent"
+                       ng-change="main.change(item)"
+                       keypress-maskerade=""/>
+            </div>
+        </div>
     </li>
 </ul>
