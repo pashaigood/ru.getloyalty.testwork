@@ -32,11 +32,11 @@
                     },
                     {
                         Name: 'Item 2',
-                        Percent: 40
+                        Percent: 30
                     },
                     {
                         Name: 'Item 3',
-                        Percent: 60
+                        Percent: 50
                     }
                 ],
                 // Fourth data set

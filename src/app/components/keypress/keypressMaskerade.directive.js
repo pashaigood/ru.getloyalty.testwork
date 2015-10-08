@@ -10,7 +10,9 @@
             link: function ($scope, $element) {
                 $element.on('keypress', function (event) {
                     if (String.fromCharCode(event.which) == ',') {
-                        $element.val($element.val() + '.');
+                        if (! /\./.test($element.val())) {
+                            $element.val($element.val() + '.');
+                        }
                         event.preventDefault();
                     }
                 });

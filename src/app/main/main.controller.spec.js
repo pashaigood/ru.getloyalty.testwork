@@ -60,7 +60,7 @@
             expect(vm.dataSet).toBe100Percent()
         });
 
-        it('dataSet should be less then 100 when it changed', function () {
+        it('dataSet should be correct reduced and be equal 100 when it changed', function () {
             vm.selectSet(dataSet);
 
 
@@ -78,15 +78,18 @@
             // Сумма всех процентов должна быть 100.
             expect(vm.dataSet).toBe100Percent();
 
+        });
+
+        it('dataSet should be correct increase', function() {
+            vm.selectSet(dataSet);
+
             // Увеличим минимальное.
-            appedValue = 20;
-            orderByPercent = orderBy(vm.dataSet, ['-Percent', 'Name']);
-            higher = orderByPercent.shift();
-            lower = orderByPercent.pop();
+            var appedValue = 20,
+            orderByPercent = orderBy(vm.dataSet, ['-Percent', 'Name']),
+            higher = orderByPercent.shift(),
+            lower = orderByPercent.pop(),
             currentValue = higher.Percent;
 
-            console.log(higher.Percent);
-            console.log(lower.Percent);
             lower.Percent += appedValue;
             vm.change(lower);
             // Ожидаем, что максимальное уменьшиться пропорционально.
@@ -95,5 +98,24 @@
             expect(vm.dataSet).toBe100Percent();
         });
 
+        it('dataSet should be proportion reduce', function() {
+            // Для теста выберем 4 набор данных.
+            vm.selectSet(dataSet);
+
+            // При изменении значение,
+            // проценты позаимствуются у самого наибольшего.
+            // Но этого количества не достаточно,
+            // что бы компенсировать весь размер увеличения.
+            // Остальные проценты, компенсируются у оставшихся элементов, пропорционально.
+            expect(vm.dataSet.length).toBe(4);
+            var ratio = vm.dataSet[0].Percent / vm.dataSet[1].Percent,
+                value = 90,
+                position = 3;
+            vm.dataSet[position].Percent = value;
+            vm.change(vm.dataSet[position]);
+            expect(vm.dataSet[position].Percent).toBe(value);
+            expect(vm.dataSet[0].Percent / vm.dataSet[1].Percent).toBeCloseTo(ratio, 2);
+            expect(vm.dataSet).toBe100Percent();
+        });
     });
 })();

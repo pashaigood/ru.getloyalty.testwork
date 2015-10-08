@@ -29,25 +29,42 @@
 
         /**
          * Метод нормализует набор данных.
+         * При передачи второго параметра, нормализация
+         * происходит относительно переданного элемента.
+         *
+         * @example
+         * // В Наборе есть данные процентов: [20, 30, 50, 0]
+         * // Пользователь изменил 4 параметр на 90
+         * normalize(vm.dataSet, vm.dataSet[2]);
+         * // В этом случаи значение 4 параметра останется 90,
+         * // а в общем значения будут выглядеть как [4, 6, 0, 90].
+         *
          * @param {Array<Object>} dataSet
+         * @param {Object} element
          */
-        function normalize(dataSet) {
+        function normalize(dataSet, element) {
             var sum = 0,
-                coeff;
+                coeff,
+                normalizedPart = element ? 100 - element.Percent : 100;
 
             // Найдём всё количество процентов.
-            angular.forEach(dataSet, function(elem) {
+            angular.forEach(dataSet, function (elem) {
                 format(elem);
-                sum += elem.Percent;
+                if (element !== elem) {
+                    sum += elem.Percent;
+                }
             });
 
+
             // Найдём коэффицент.
-            coeff = 100 / sum;
+            coeff = sum > 0 ? normalizedPart / sum : 0;
 
             // Приведём общее значение к 100.
-            angular.forEach(dataSet, function(elem) {
-                elem.Percent *= coeff;
-                elem.Percent = Math.round(elem.Percent*100)/100;
+            angular.forEach(dataSet, function (elem) {
+                if (element !== elem && normalizedPart !== sum) {
+                    elem.Percent *= coeff;
+                }
+                elem.Percent = Math.round(elem.Percent * 100) / 100;
                 elem._Percent = elem.Percent;
             });
         }
@@ -109,19 +126,19 @@
             if (changedElement) {
                 var newValue = changedElement.Percent + (oldValue - value);
 
+
+
                 if (newValue < 0) {
                     changedElement.Percent = 0;
                 }
-                else
-                if(newValue > 100){
+                else if (newValue > 100) {
                     changedElement.Percent = 100;
                 }
                 else {
                     changedElement.Percent = newValue;
                 }
 
-                normalize(vm.dataSet);
-
+                normalize(vm.dataSet, elem);
             }
         }
 
