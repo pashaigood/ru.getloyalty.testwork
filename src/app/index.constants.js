@@ -3,6 +3,6 @@
 
   angular
     .module('testWork')
-    .constant('_', _);
+    .constant('empty', false);
 
 })();

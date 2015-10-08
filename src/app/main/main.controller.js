@@ -6,14 +6,16 @@
         .controller('MainController', MainController);
 
     /** @ngInject */
-    function MainController($scope, $filter, data, _) {
+    function MainController($filter, data) {
         var vm = this,
             orderBy = $filter('orderBy');
 
 
         function init() {
             vm.data = data;
-            vm.selectSet(data[3]);
+            if (data.length) {
+                vm.selectSet(data[data.length - 1]);
+            }
         }
 
         /**
@@ -25,6 +27,11 @@
                 elem.Percent = elem.Percent.replace(',', '.');
                 elem.Percent = parseFloat(elem.Percent);
             }
+        }
+
+        function finalizeElement(elem) {
+            elem.Percent = Math.round(elem.Percent * 100) / 100;
+            elem._Percent = elem.Percent;
         }
 
         /**
@@ -49,23 +56,24 @@
 
             // Найдём всё количество процентов.
             angular.forEach(dataSet, function (elem) {
-                format(elem);
                 if (element !== elem) {
                     sum += elem.Percent;
                 }
             });
 
 
+            if (normalizedPart === sum) {
+                return;
+            }
             // Найдём коэффицент.
             coeff = sum > 0 ? normalizedPart / sum : 0;
 
             // Приведём общее значение к 100.
             angular.forEach(dataSet, function (elem) {
-                if (element !== elem && normalizedPart !== sum) {
+                if (element !== elem) {
                     elem.Percent *= coeff;
                 }
-                elem.Percent = Math.round(elem.Percent * 100) / 100;
-                elem._Percent = elem.Percent;
+                finalizeElement(elem);
             });
         }
 
@@ -75,6 +83,9 @@
          */
         vm.selectSet = function (dataSet) {
             vm.dataSet = dataSet;
+            angular.forEach(dataSet, function (elem) {
+                format(elem);
+            });
             normalize(vm.dataSet);
         };
 
@@ -84,16 +95,17 @@
          */
         vm.change = function (elem) {
             format(elem);
-            elem.Percent = elem.Percent > 0 ? elem.Percent : 0;
-            elem.Percent = elem.Percent < 100 ? elem.Percent : 100;
-
             recalculate(elem);
+            normalize(vm.dataSet, elem);
         };
 
         /**
          * Метод перерасчитывает текущий набор данных, так чтобы их значение не привышало 100
          */
         function recalculate(elem) {
+            elem.Percent = elem.Percent > 0 ? elem.Percent : 0;
+            elem.Percent = elem.Percent < 100 ? elem.Percent : 100;
+
             var value = elem.Percent,
                 oldValue = elem._Percent,
                 changedElement,
@@ -119,28 +131,47 @@
             }
 
 
-            while ((changedElement = order.shift()) === elem) {
-                // Убедимся, что элемент не являеться сам сабой.
+            var cnt = order.length;
+            while ((cnt -= 1) > -1) {
+
+                while ((changedElement = order.shift()) === elem) {
+                    // Убедимся, что элемент не являеться сам сабой.
+                }
+
+                if (changedElement) {
+                    var newValue = changedElement.Percent + (oldValue - value);
+
+                    // Если значение получиться меньше нуля,
+                    // То отнимаем только то, что до нуля.
+                    // Перём следующий элемент из сортировки и проделываем тоже самое с ним.
+
+                    if (newValue < 0) {
+                        // Найдём количество процентов,
+                        // которые ещё не компенсировали.
+                        // И компенсируем его у следующего элемента.
+                        oldValue = value + newValue;
+                        changedElement.Percent = 0;
+                        finalizeElement(changedElement);
+                        continue;
+
+                    }
+                    else if (newValue > 100) {
+                        changedElement.Percent = 100;
+                    }
+                    else {
+                        changedElement.Percent = newValue;
+                    }
+
+                    finalizeElement(changedElement);
+                    finalizeElement(elem);
+                    break;
+
+                }
+
             }
 
-            if (changedElement) {
-                var newValue = changedElement.Percent + (oldValue - value);
-
-
-
-                if (newValue < 0) {
-                    changedElement.Percent = 0;
-                }
-                else if (newValue > 100) {
-                    changedElement.Percent = 100;
-                }
-                else {
-                    changedElement.Percent = newValue;
-                }
-
-                normalize(vm.dataSet, elem);
-            }
         }
+
 
         init();
     }

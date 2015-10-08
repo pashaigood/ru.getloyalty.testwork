@@ -60,6 +60,18 @@
             expect(vm.dataSet).toBe100Percent()
         });
 
+        it('dataSet sum should be 100', function() {
+            vm.selectSet(dataSet);
+            // Немного поиграем с входящими данныеми.
+            // Сумма всегда должна быть 100.
+            for (var i = 0; i < 10; i++) {
+                var randomIndex = Math.round(Math.random() * (dataSet.length-1));
+                vm.dataSet[randomIndex].Percent = Math.round(Math.random() * 20000) / 100;
+                vm.change(vm.dataSet[randomIndex]);
+                expect(vm.dataSet).toBe100Percent();
+            }
+        });
+
         it('dataSet should be correct reduced and be equal 100 when it changed', function () {
             vm.selectSet(dataSet);
 
@@ -98,24 +110,5 @@
             expect(vm.dataSet).toBe100Percent();
         });
 
-        it('dataSet should be proportion reduce', function() {
-            // Для теста выберем 4 набор данных.
-            vm.selectSet(dataSet);
-
-            // При изменении значение,
-            // проценты позаимствуются у самого наибольшего.
-            // Но этого количества не достаточно,
-            // что бы компенсировать весь размер увеличения.
-            // Остальные проценты, компенсируются у оставшихся элементов, пропорционально.
-            expect(vm.dataSet.length).toBe(4);
-            var ratio = vm.dataSet[0].Percent / vm.dataSet[1].Percent,
-                value = 90,
-                position = 3;
-            vm.dataSet[position].Percent = value;
-            vm.change(vm.dataSet[position]);
-            expect(vm.dataSet[position].Percent).toBe(value);
-            expect(vm.dataSet[0].Percent / vm.dataSet[1].Percent).toBeCloseTo(ratio, 2);
-            expect(vm.dataSet).toBe100Percent();
-        });
     });
 })();

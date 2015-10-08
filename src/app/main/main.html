@@ -1,9 +1,8 @@
 <nav>
     <ul class="pagination">
-        <li ng-repeat="set in main.data"><a href="#" ng-click="main.selectSet(set)">Набор данных {{$index+1}}</a></li>
+        <li ng-repeat="set in main.data" ng-class="{'active': set ==  main.dataSet}"><a href="#" ng-click="main.selectSet(set)">Набор данных {{$index+1}}</a></li>
     </ul>
 </nav>
-{{main.dataSet}}
 <ul class="list-unstyled">
     <li ng-repeat="item in main.dataSet">
         <div class="row form-group">
@@ -11,11 +10,17 @@
                 <input class="form-control" type="range" ng-model="item.Percent" ng-change="main.change(item)"/>
             </div>
             <div class="col-xs-2">
-                <input class="form-control" type="number"
+                <input class="form-control" tabindex="{{$index+1}}" type="number"
                        ng-model="item.Percent"
                        ng-change="main.change(item)"
                        keypress-maskerade=""/>
             </div>
         </div>
+    </li>
+</ul>
+
+<ul class="list-unstyled">
+    <li ng-repeat="item in main.dataSet">
+        {{item.Name}}: {{item.Percent}}%
     </li>
 </ul>
