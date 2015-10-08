@@ -9,6 +9,10 @@
         var orderBy = $filter('orderBy');
 
         return {
+            /**
+             * Метод возвращает тестовые данные.
+             * @returns {*[]}
+             */
             getData: function () {
                 return [
                     // First data set

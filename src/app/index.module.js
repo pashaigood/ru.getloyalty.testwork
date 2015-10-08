@@ -2,6 +2,6 @@
   'use strict';
 
   angular
-    .module('testWork', ['ngSanitize', 'ui.bootstrap']);
+    .module('testWork', []);
 
 })();
