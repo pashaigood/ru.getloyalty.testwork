@@ -1,6 +1,6 @@
 {
   "name": "testWork",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "dependencies": {
     "angular-sanitize": "~1.4.2",
     "bootstrap-sass": "~3.3.5",
